@@ -8,13 +8,11 @@
 #include "engine_control.h"
 #include "scenarios.h"
 #include "motion_fx.h"
+#include "monitor.h"
 
 #include <math.h>
 
 #include <string.h>
-
-#define IMU_BUS 1
-#define EC_BUS 1
 
 #define MSG_QUEUE_LENGTH 4
 #define MSG_ITEM_SIZE sizeof(ControllerMessage_t)
@@ -65,6 +63,8 @@ struct
 
     MachineState_t mState;
     float pwm[4];
+
+    float vbat;
 } g_controllerState;
 
 /******************************************************************************/
@@ -171,7 +171,9 @@ void Controller_Task()
 
     IMU_Init(IMU_BUS);
 
-    FlightScenario_Init(250); // TODO: define globally
+    IMU_SetMode(IMU_Mode_Fusion); // TODO: comment it!
+
+    FlightScenario_Init(FUSION_FREQ);
 
     ControllerMessage_t msg;
 
@@ -201,6 +203,8 @@ void Controller_Task()
 static void _Controller_Process(uint8_t newMeas)
 {
     static MachineState_t prevState = MachineState_Disarmed;
+
+    g_controllerState.vbat = Monitor_GetVbat();
 
     if ((prevState != g_controllerState.mState) && (g_controllerState.mState == MachineState_Armed))
     {
