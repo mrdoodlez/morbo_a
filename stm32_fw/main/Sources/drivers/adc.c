@@ -15,17 +15,13 @@ static struct
     uint32_t lastErr;
 } _adcContext;
 
-/*
-
 static const uint32_t _channels[] =
     {
         ADC_CHANNEL_1,
         ADC_CHANNEL_2};
 
-*/
-
 static void MX_ADC1_Init(void);
-// static void SelectChannel(ADC_Chan_t ch);
+static void SelectChannel(ADC_Chan_t ch);
 
 /******************************************************************************/
 
@@ -52,7 +48,7 @@ int ADC_Read(int dev, ADC_Chan_t chan, ADC_ConvertCb cb)
     if (_adcContext.convInProgress)
         return -2;
 
-    // SelectChannel(chan);
+    SelectChannel(chan);
 
     _adcContext.conversions[chan].cb = cb;
 
@@ -79,7 +75,6 @@ static void MX_ADC1_Init(void)
 {
 
     ADC_MultiModeTypeDef multimode = {0};
-    ADC_ChannelConfTypeDef sConfig = {0};
 
     /** Common config
      */
@@ -112,9 +107,17 @@ static void MX_ADC1_Init(void)
         Error_Handler();
     }
 
+    /* CubeMX enables DMA interrupt even if not configured */
+    HAL_NVIC_DisableIRQ(DMA1_Channel1_IRQn);
+}
+
+static void SelectChannel(ADC_Chan_t ch)
+{
+    ADC_ChannelConfTypeDef sConfig = {0};
+
     /** Configure Regular Channel
      */
-    sConfig.Channel = ADC_CHANNEL_1;
+    sConfig.Channel = _channels[ch];
     sConfig.Rank = ADC_REGULAR_RANK_1;
     sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
     sConfig.SingleDiff = ADC_SINGLE_ENDED;
@@ -125,29 +128,8 @@ static void MX_ADC1_Init(void)
         Error_Handler();
     }
 
-    /* CubeMX enables DMA interrupt even if not configured */
-    HAL_NVIC_DisableIRQ(DMA1_Channel1_IRQn);
-}
-
-/*
-
-static void SelectChannel(ADC_Chan_t ch)
-{
-    ADC_ChannelConfTypeDef sConfig = {0};
-
-    sConfig.Channel = _channels[ch]; // ADC_CHANNEL_4;
-    sConfig.Rank = ADC_REGULAR_RANK_1;
-    sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
-    sConfig.SingleDiff = ADC_SINGLE_ENDED;
-    if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-    {
-        Error_Handler();
-    }
-
     _adcContext.currChannel = ch;
 }
-
-*/
 
 /**
  * @brief ADC MSP Initialization

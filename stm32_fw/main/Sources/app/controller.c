@@ -65,6 +65,7 @@ struct
     float pwm[4];
 
     float vbat;
+    float ch1;
 } g_controllerState;
 
 /******************************************************************************/
@@ -204,7 +205,10 @@ static void _Controller_Process(uint8_t newMeas)
 {
     static MachineState_t prevState = MachineState_Disarmed;
 
+    Monitor_Update();
+
     g_controllerState.vbat = Monitor_GetVbat();
+    g_controllerState.ch1 = Monitor_GetCh1();
 
     if ((prevState != g_controllerState.mState) && (g_controllerState.mState == MachineState_Armed))
     {

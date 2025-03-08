@@ -8,7 +8,10 @@ extern "C"
 {
 #endif
 
+    void Monitor_Update();
+
     float Monitor_GetVbat();
+    float Monitor_GetCh1();
 
 #ifdef __cplusplus
 }
