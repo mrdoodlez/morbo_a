@@ -9,6 +9,7 @@
 #include "scenarios.h"
 #include "motion_fx.h"
 #include "monitor.h"
+#include "timer.h"
 
 #include <math.h>
 
@@ -66,6 +67,8 @@ struct
 
     float vbat;
     float ch1;
+
+    uint64_t rt;
 } g_controllerState;
 
 /******************************************************************************/
@@ -209,6 +212,8 @@ static void _Controller_Process(uint8_t newMeas)
 
     g_controllerState.vbat = Monitor_GetVbat();
     g_controllerState.ch1 = Monitor_GetCh1();
+
+    g_controllerState.rt = Timer_GetRuntime(1);
 
     if ((prevState != g_controllerState.mState) && (g_controllerState.mState == MachineState_Armed))
     {
