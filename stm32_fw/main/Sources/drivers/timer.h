@@ -25,6 +25,8 @@ extern "C"
 
     void Timer_Enable(int dev, Timer_OutputCh_t ch, int en);
 
+    float Timer_GetFreq(int dev);
+
     uint64_t Timer_GetRuntime(int dev);
 
 #ifdef __cplusplus

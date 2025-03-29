@@ -165,13 +165,11 @@ void Controller_Task()
         // TODO: handle error
     }
 
-    /*
     rc = EC_Init(EC_BUS);
     if (rc)
     {
         // TODO: handle error
     }
-    */
 
     IMU_Init(IMU_BUS);
 
@@ -217,7 +215,6 @@ static void _Controller_Process(uint8_t newMeas)
 
     if ((prevState != g_controllerState.mState) && (g_controllerState.mState == MachineState_Armed))
     {
-        /*
         EC_Enable(0);
 
         for (int en = EC_Engine_1; en <= EC_Engine_4; en++)
@@ -234,7 +231,7 @@ static void _Controller_Process(uint8_t newMeas)
             g_controllerState.pwm[en] = 0.1;
             EC_SetThrottle(en, g_controllerState.pwm[en]);
         }
-        */
+
     }
     else if ((g_controllerState.mState == MachineState_Armed) && (newMeas != 0))
     {

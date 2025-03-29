@@ -30,6 +30,11 @@ void Timer_Init(int dev)
         MX_TIM1_Init();
 }
 
+float Timer_GetFreq(int dev)
+{
+    return (float)TIM_FREQ;
+}
+
 void Timer_SetPWM(int dev, Timer_OutputCh_t oc, float ratio)
 {
     sConfigOC[oc].OCMode = TIM_OCMODE_PWM1;
@@ -63,6 +68,9 @@ void Timer_Enable(int dev, Timer_OutputCh_t oc, int en)
             /* PWM generation Error */
             Error_Handler();
         }
+
+        // we don't want to stop the timer anyway
+        __HAL_TIM_ENABLE(&htim1);
     }
 }
 
@@ -144,6 +152,8 @@ static void MX_TIM1_Init(void)
     }
 
     HAL_TIM_MspPostInit(&htim1);
+
+    __HAL_TIM_ENABLE(&htim1);
 }
 
 /*******************************************************************************/
@@ -188,7 +198,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim)
         GPIO_InitStruct.Pull = GPIO_PULLUP;
         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
         GPIO_InitStruct.Alternate = GPIO_AF2_TIM1;
-        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
     }
 }
 /**
